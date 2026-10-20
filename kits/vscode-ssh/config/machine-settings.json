@@ -1,0 +1,6 @@
+{
+    "telemetry.telemetryLevel": "off",
+    "update.mode": "none",
+    "extensions.autoUpdate": false,
+    "terminal.integrated.defaultProfile.linux": "bash"
+}

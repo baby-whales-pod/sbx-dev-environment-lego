@@ -1,0 +1,33 @@
+# syntax=docker/sandbox-kit:3
+schemaVersion: "3"
+kind: mixin
+displayName: Go toolchain
+description: Go toolchain and gopls (language server)
+
+args:
+  go_version:
+    default: "1.27.2"   # mm requires Go 1.26+
+    pattern: '^[0-9]+\.[0-9]+(\.[0-9]+)?$'
+    buildArg: GO_VERSION
+  gopls_version:
+    # Pin a tag (e.g. v0.x.y) for reproducible builds.
+    default: latest
+    pattern: '^(latest|v[0-9]+\.[0-9]+\.[0-9]+)$'
+    buildArg: GOPLS_VERSION
+
+provides: ["go@${{ kit.args.go_version }}"]
+
+capabilities:
+  # Runtime access with the tool: module downloads and checksum DB.
+  # Add private module hosts here (or in a kit set) if you need them.
+  - type: com.docker.sandbox/network-policy@1
+    config:
+      runtime:
+        allow:
+          - proxy.golang.org
+          - sum.golang.org
+          - github.com
+          - golang.org
+  # - type: com.docker.sandbox/agent-context@1
+  #   config:
+  #     contentFile: ./go-context.md

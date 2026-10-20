@@ -1,0 +1,29 @@
+# syntax=docker/sandbox-kit:3
+schemaVersion: "3"
+kind: mixin
+displayName: Docker Agent
+description: Docker Agent (docker-agent), a multi-agent runtime driven by YAML agent files
+sourceUrl: https://github.com/docker/docker-agent
+
+dockerfile: ./docker-agent.dockerfile
+
+args:
+  docker_agent_version:
+    # A release tag of https://github.com/docker/docker-agent/releases (no leading "v")
+    default: "1.150.0"
+    pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
+    buildArg: DOCKER_AGENT_VERSION
+
+provides: ["docker-agent@${{ kit.args.docker_agent_version }}"]
+
+capabilities:
+  # Egress is deny-by-default. Allow the model provider(s) your agent files use;
+  # check `sbx policy log` if something is blocked.
+  - type: com.docker.sandbox/network-policy@1
+    config:
+      runtime:
+        allow:
+          - api.anthropic.com
+          - api.openai.com
+          - host.docker.internal:12434 # Docker Model Runner
+          - host.docker.internal:11434 # Ollama

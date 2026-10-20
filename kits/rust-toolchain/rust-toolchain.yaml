@@ -1,0 +1,29 @@
+# syntax=docker/sandbox-kit:3
+schemaVersion: "3"
+kind: mixin
+displayName: Rust toolchain
+description: Rust toolchain (cargo, rustc, rustfmt, clippy) and rust-analyzer (language server)
+
+args:
+  rust_version:
+    # A Rust release (e.g. 1.99.0), or stable / beta / nightly (not reproducible).
+    default: "1.99.0"
+    pattern: '^([0-9]+\.[0-9]+(\.[0-9]+)?|stable|beta|nightly)$'
+    buildArg: RUST_VERSION
+
+provides: ["rust@${{ kit.args.rust_version }}"]
+
+capabilities:
+  # Runtime access with the tool: the crates.io index and crate downloads.
+  # Add private registries / git hosts here (or in a kit set) if you need them.
+  - type: com.docker.sandbox/network-policy@1
+    config:
+      runtime:
+        allow:
+          - index.crates.io
+          - static.crates.io
+          - crates.io
+          - github.com
+  # - type: com.docker.sandbox/agent-context@1
+  #   config:
+  #     contentFile: ./rust-context.md

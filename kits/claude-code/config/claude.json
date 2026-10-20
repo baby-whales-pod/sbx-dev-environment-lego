@@ -1,0 +1,8 @@
+{
+  "theme": "dark",
+  "hasCompletedOnboarding": true,
+  "shiftEnterKeyBindingInstalled": true,
+  "projects": {
+    "/": { "hasTrustDialogAccepted": true }
+  }
+}

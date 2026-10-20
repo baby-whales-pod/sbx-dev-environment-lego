@@ -1,0 +1,38 @@
+# syntax=docker/sandbox-kit:3
+#
+# zed-ssh: a shell sandbox meant to be driven from the host's Zed editor over
+# SSH (Zed remote development). Nothing graphical runs in the sandbox: Zed
+# stays on the host and installs its remote server (~/.zed_server) inside the
+# sandbox through the sandbox SSH endpoint (`ssh <name>.sbx`).
+#
+# Run it with the host launcher:  ../../sbx-zed [WORKSPACE]
+# or by hand:
+#   sbx setup ssh
+#   sbx create --name my-box ./kits/zed-ssh /path/to/workspace
+#   zed --new ssh://my-box.sbx/path/to/workspace
+schemaVersion: "3"
+kind: workload
+displayName: zed-ssh
+description: >-
+    Shell sandbox for Zed remote development: Zed runs on the host and connects to the sandbox
+    through the sbx SSH endpoint, with the network policy the Zed remote server needs.
+# Replace with the repository this kit is published from.
+sourceUrl: https://github.com/docker/sandboxes
+licenses: [MIT]
+version: "0.1.0"
+capabilities:
+    - type: com.docker.sandbox/sbx@1
+    - type: com.docker.sandbox/network-policy@1
+      config:
+        runtime:
+            allow:
+                # Zed remote server: downloaded by the sandbox unless the host
+                # settings use "upload_binary_over_ssh": true (the host then
+                # downloads it and pushes it over SSH).
+                - zed.dev
+                - "*.zed.dev"
+    - type: com.docker.sandbox/agent-context@1
+      config:
+        # Path relative to this kit directory; the sandbox-kit frontend stages it
+        # into the image and rewrites this field to the in-image path.
+        contentFile: zed-ssh-context.md

@@ -1,0 +1,25 @@
+schemaVersion: "1"
+
+# Sandbox name = SSH host (<name>.sbx): letters, digits and hyphens only.
+name: code-dev-env
+
+# The workload kit is the base "agent": its name is the kit directory name.
+agent: vscode-ssh
+
+# Relative paths resolve against the directory of this file.
+kits:
+  - ./kits/vscode-ssh
+  - ./kits/nushell
+  - ./kits/claude-code
+  - ./kits/rust-toolchain
+
+
+# Mounted at the same path as on the host, so VS Code (or Zed) opens that same path remotely.
+workspace: ./demo
+
+# https://docs.docker.com/ai/sandboxes/configuration/environment-files/
+# sbx setup ssh
+# sbx env create -f sbxenv.vscode.yaml --force
+# code --new-window --remote ssh-remote+code-dev-env.sbx $PWD/demo
+# stop:
+# sbx env rm -f sbxenv.vscode.yaml --force

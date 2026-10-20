@@ -1,0 +1,44 @@
+# syntax=docker/sandbox-kit:3
+#
+# vscode-ssh: a shell sandbox meant to be driven from the host's VS Code over
+# SSH (Remote-SSH extension). Nothing graphical runs in the sandbox: VS Code
+# stays on the host and installs its server inside the sandbox through the
+# sandbox SSH endpoint (`ssh <name>.sbx`).
+#
+# Run it with the host launcher:  ../../sbx-vscode [WORKSPACE]
+# or by hand:
+#   sbx setup ssh
+#   sbx create --name my-box ./kits/vscode-ssh /path/to/workspace
+#   code --remote ssh-remote+my-box.sbx /path/to/workspace
+schemaVersion: "3"
+kind: workload
+displayName: vscode-ssh
+description: >-
+    Shell sandbox for VS Code Remote-SSH: VS Code runs on the host and connects to the sandbox
+    through the sbx SSH endpoint, with the network policy the VS Code server needs.
+# Replace with the repository this kit is published from.
+sourceUrl: https://github.com/docker/sandboxes
+licenses: [MIT]
+version: "0.1.0"
+capabilities:
+    - type: com.docker.sandbox/sbx@1
+    - type: com.docker.sandbox/network-policy@1
+      config:
+        runtime:
+            allow:
+                # VS Code server: downloaded by the sandbox when Remote-SSH is
+                # not set to download it on the host and push it over SFTP.
+                - update.code.visualstudio.com
+                - vscode.download.prss.microsoft.com
+                - "*.vscode-cdn.net"
+                # Extensions installed on the remote side (the "SSH: <name>.sbx"
+                # section of the Extensions view).
+                - marketplace.visualstudio.com
+                - "*.gallery.vsassets.io"
+                - "*.gallerycdn.vsassets.io"
+                - open-vsx.org
+    - type: com.docker.sandbox/agent-context@1
+      config:
+        # Path relative to this kit directory; the sandbox-kit frontend stages it
+        # into the image and rewrites this field to the in-image path.
+        contentFile: vscode-ssh-context.md
